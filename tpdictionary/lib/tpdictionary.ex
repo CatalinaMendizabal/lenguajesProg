@@ -1,9 +1,9 @@
 defmodule Translator do
 
-  defmodule Translator.State do
+  defmodule State do
     defstruct document_count: 0, word_count: 0, word_frequency: %{}
       def new_state(document_count, word_count, word_frequency) do
-        %Translator.State{
+        %State{
           document_count: document_count,
           word_count: word_count,
           word_frequency: word_frequency
@@ -16,7 +16,7 @@ defmodule Translator do
   end
 
   def loop() do
-    loop(%Translator.State{})
+    loop(%State{})
   end
 
   def translate(document, dictionary) do
