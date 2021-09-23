@@ -1,21 +1,11 @@
-# Tpdictionary
+# Traductor
 
-**TODO: Add description**
+## Partiendo de la implementación del traductor realizado en clases:
 
-## Installation
+- Utilizar un diccionario (mapa) para la traducción de las palabras. Recibirlo como parámetro. 
+- Permitir la traducción de documentos (no sólo palabras). Para ello, considerar un documento a una lista de palabras separadas por espacio.
+- Agregar un nuevo tipo de mensajes ‘stats’ que devuelva la frecuencia de las palabras traducidas (ver Enum.frequencies/1 y Map.merge/3)- (mapa del tipo %{“hello” -> 4, “world” -> 2})
+- Implementar una estructura Translator.State que mantenga el estado del traductor incluyendo, la cantidad de documentos traducidos, la cantidad de palabras y la frecuencia de las palabras traducidas. 
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `tpdictionary` to your list of dependencies in `mix.exs`:
 
-```elixir
-def deps do
-  [
-    {:tpdictionary, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/tpdictionary](https://hexdocs.pm/tpdictionary).
 
