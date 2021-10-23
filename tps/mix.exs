@@ -14,6 +14,7 @@ defmodule Tpdictionary.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
+      mod: { MyApp, []},
       extra_applications: [:logger]
     ]
   end
