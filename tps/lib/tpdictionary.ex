@@ -1,9 +1,10 @@
 defmodule Translator do
 
   defmodule State do
-    defstruct dictionary: , document_count: 0, word_count: 0, word_frequency: %{}
-      def new_state(document_count, word_count, word_frequency) do
+    defstruct dictionary: %{"hola" => "hello"}, document_count: 0, word_count: 0, word_frequency: %{}
+      def new_state(dictionary, document_count, word_count, word_frequency) do
         %State{
+          dictionary: dictionary,
           document_count: document_count,
           word_count: word_count,
           word_frequency: word_frequency
@@ -11,15 +12,19 @@ defmodule Translator do
       end
   end
 
-  def start(dict) do
-    spawn(fn -> loop(dict) end)
+  def start() do
+    spawn(fn -> loop() end)
+  end
+
+  def start(state) do
+    spawn(fn -> loop(state) end)
   end
 
   def loop() do
     loop(%State{})
   end
 
-  def loop(dict, state) do
+  def loop(state) do
     receive do
       {:translate, from, document, dictionary} ->
         translation = document
