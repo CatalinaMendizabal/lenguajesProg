@@ -2,8 +2,9 @@ defmodule TranslatorV2 do
 
   defmodule State do
     defstruct dictionary: %{"hola" => "hello", "mundo" => "world"}, document_count: 0, word_count: 0, word_frequency: %{}
-      def new_state(document_count, word_count, word_frequency) do
+      def new_state(dictionary, document_count, word_count, word_frequency) do
         %State{
+          dictionary: dictionary,
           document_count: document_count,
           word_count: word_count,
           word_frequency: word_frequency
