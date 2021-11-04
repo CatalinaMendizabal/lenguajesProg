@@ -106,7 +106,7 @@ defmodule Banco do
 
   @impl true
   def handle_call({:deposit, id, amount}, _from, state) do
-    account = state.accounts |> Enum.filter(fn x -> x.id == id end) |> List.first()
+    account = state.accounts |> Enum.find(fn x -> x.id == id end)
     new_account = %Account{id: account.id, name: account.name, balance: account.balance + amount}
 
     new_accounts = (state.accounts |> Enum.filter(fn x -> x.id != id end)) ++ [new_account]
@@ -117,7 +117,7 @@ defmodule Banco do
 
   @impl true
   def handle_call({:withdraw, id, amount}, _from, state) do
-    account = state.accounts |> Enum.filter(fn x -> x.id == id end) |> List.first()
+    account = state.accounts |> Enum.find(fn x -> x.id == id end)
     new_account = %Account{id: account.id, name: account.name, balance: account.balance - amount}
 
     new_accounts = (state.accounts |> Enum.filter(fn x -> x.id != id end)) ++ [new_account]
