@@ -133,3 +133,94 @@ defmodule Banco do
   end
 
 end
+
+defmodule Sessions do
+  defmodule State do
+    defstruct users: []
+  end
+  defmodule User do
+    defstruct pid: nil, name: "", status: :online, last_time: System.monotonic_time(:second)
+  end
+
+  use GenServer
+
+  @impl true
+  def init(init_arg) do
+    {:ok, init_arg}
+  end
+
+  def start_link() do
+    GenServer.start_link(__MODULE__, %State{}, name: __MODULE__)
+    GenServer.cast(__MODULE__, :loop)
+  end
+
+  def register_user(name, pid) do
+    GenServer.cast(__MODULE__, {:register, name, pid})
+  end
+
+  def deregister(name) do
+    GenServer.cast(__MODULE__, {:deregister, name})
+  end
+
+  def user_still_active(name) do
+    GenServer.cast(__MODULE__, {:active, name})
+  end
+
+  def get_online_users do
+    GenServer.call(__MODULE__, :get_online)
+  end
+
+  @impl true
+  def handle_cast({:register, name, pid}, state) do
+
+    new_users = state.users ++ [%User{pid: pid, name: name}]
+
+    {:noreply, %State{users: new_users}}
+  end
+
+  @impl true
+  def handle_cast({:deregister, name}, state) do
+
+    new_users = state.users |> Enum.filter(fn e -> e.name != name end)
+
+    {:noreply, %State{users: new_users}}
+  end
+
+  @impl true
+  def handle_cast({:active, name}, state) do
+    user = state.users |> Enum.find(fn e -> e.name == name end)
+    new_user = %User{pid: user.pid, name: user.name, last_time: System.monotonic_time(:second)}
+
+    users = state.users |> Enum.filter(fn e -> e.name != name end)
+    new_users = users ++ [new_user]
+
+    {:noreply, %State{users: new_users}}
+  end
+
+  @impl true
+  def handle_cast(:loop, state) do
+    now = System.monotonic_time(:second)
+
+    active = state.users
+      |> Enum.filter(fn u -> now - u.last_time <= 5 * 60 && u.status == :online end)
+
+    inactive = state.users
+      |> Enum.filter(fn u -> now - u.last_time > 5 * 60 && u.status == :online end)
+
+    inactive |> Enum.each(fn u -> send(u.pid, {:status_change, :offline}) end)
+
+    new_users = active ++ (inactive
+      |> List.foldl([], fn u, acc -> acc ++ [%User{pid: u.pid, name: u.name, status: :offline, last_time: u.last_time}] end))
+
+    GenServer.cast(__MODULE__, :loop)
+    {:noreply, %State{users: new_users}}
+  end
+
+  @impl true
+  def handle_call(:get_online, _from, state) do
+    users = state.users |> Enum.filter(fn e -> e.status == :online end) |> Enum.map(fn e -> e.name end)
+
+    {:reply, {:online_users, users}, state}
+  end
+
+end
