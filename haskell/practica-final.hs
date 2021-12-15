@@ -46,4 +46,28 @@ getEmployees [Worker d s l] = getEmployees l
 getEmployees (x:xs) = getEmployees [x] ++ getEmployees xs
 
 result :: [(String, Double)] -> (String, Double)
+result [] = ("", 0.0)
 result (x:xs) = (fst x, sum [snd y | y <- x:xs])
+
+{-| Ver si un grafo tiene ciclos
+
+>>> hasCycle ([(1, []), (2, [1]), (3, [1])])
+True
+
+NO ANDA
+-}
+
+type Graph a = [(a, [a])]
+
+hasCycle :: (Eq a) => Graph a -> Bool
+hasCycle [] = False
+hasCycle [(_,[])] = False
+hasCycle (x:xs) = hasCycleAux (x:xs) []
+
+hasCycleAux :: (Eq a) => Graph a -> [a] -> Bool
+hasCycleAux [] _ = False
+hasCycleAux (x:xs) l
+    | fst x `elem` snd x = True
+    | fst x `elem` l = True
+    | [s | s <- snd x, s `elem` l] /= [] = True
+    | otherwise = hasCycleAux xs (fst x:l)

@@ -24,3 +24,5 @@ practica_parcial-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+._DS_Store
